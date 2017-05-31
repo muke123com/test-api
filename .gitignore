@@ -1,0 +1,6 @@
+/server/node_modules/*
+/.settings/*
+/.project
+/.buildpath
+
+
