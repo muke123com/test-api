@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
+var fileManage = require('./routes/fileManage');
 var douban = require('./routes/douban');
 var blibli = require('./routes/blibli');
 
@@ -24,6 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+app.use('/file', fileManage);
 app.use('/douban', douban);
 app.use('/blibli', blibli);
 

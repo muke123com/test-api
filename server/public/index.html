@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="javascripts/jquery.min.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+
+    </script>
+  <table style='width: 100%;height: 100%'>
+   <tr>
+    <td style='width:800px;text-align: center;'>
+      <form class="" action="/file/fileUpload" method="post" enctype="multipart/form-data">
+        <input id='file' type="file" name="file">
+        <input id='file_upload' type="submit" value="upload">
+      </form>
+    </td>
+   </tr>
+  </table>
+  <script type="text/javascript">
+    var filenode = document.getElementById("file");
+    filenode.onchange=function(){
+    var xhr=new XMLHttpRequest();
+      //设置回调，当请求的状态发生变化时，就会被调用
+      xhr.onreadystatechange = function () {
+          //等待上传结果,将背景图像设置为tx2.jpg
+          if (xhr.readyState == 1) {
+              filenode.parentNode.style.backgroundImage = "url('/images/tx2.jpg')";
+          }
+          //上传成功，返回的文件名，设置到父节点的背景中
+          if (xhr.readyState == 4 && xhr.status == 200) {
+              var path=JSON.parse(xhr.responseText).path.split("\\");
+              filenode.parentNode.style.backgroundImage = "url('./uploads/" +path[path.length-1]+ "')";
+          }
+      }
+
+      //构造form数据
+      var data= new FormData();
+      data.append("files", filenode.files[0]);
+
+      //设置请求，true：表示异步
+      xhr.open("post", "/file/fileUpload", true);
+      //不要缓存
+      //xhr.setRequestHeader("If-Modified-Since", "0");
+      //提交请求
+      xhr.send(data);
+      //清除掉，否则下一次选择同样的文件就进入不到onchange函数中了
+      filenode.value = null;
+    }
+  </script>
+  </body>
+</html>
