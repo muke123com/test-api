@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="js/jquery-2.1.0.js" charset="utf-8"></script>
+	</head>
+	<body>
+		<div class="chat-container">
+			<ul>
+				
+			</ul>
+		</div>
+		<div class="send-container">
+			<textarea id="send_content" rows="" cols="" style="display: block;"></textarea>
+			<input type="button" id="send" value="发送" />
+		</div>
+		<script type="text/javascript">
+			var container = $(".chat-container ul");
+			$("#send").click(function(){
+				var text = $("#send_content").val();
+				$.ajax({
+					url:"/chat/send",
+					data: {
+						text: text
+					},
+					type:"post",
+					dataType: "json",
+					async:true,
+					success: function(data){
+						
+					},
+					error: function(e){
+						
+					}
+				});
+				console.log(text);
+			})
+			
+			receiveInfo();
+			setInterval(receiveInfo, 40000);
+			
+			function receiveInfo(){
+				$.ajax({
+					url:"/chat/receive",
+					data: {
+					},
+					type:"post",
+					dataType: "json",
+					timeout: 40000,
+					async:true,
+					success: function(data){
+						container.append('<li>'+data.data.text+'***</li>');
+						receiveInfo();
+					},
+					error: function(e){
+						$("body").html(e.responseText);
+					}
+				});
+			}	
+		</script>
+	</body>
+</html>
