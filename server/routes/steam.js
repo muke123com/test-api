@@ -17,6 +17,11 @@ router.get('/git', function(req, res, next) {
 	let data = gitSearch(q, 1, res);
 });
 router.get('/steam', function(req, res, next) {
+	res.render('steam', {
+		title: 'steam'
+	})
+});
+router.get('/getSteam', function(req, res, next) {
 	let data = [];
 	connection.query('SELECT * FROM m_steam', function(error, results, fields){
 		data = results;		

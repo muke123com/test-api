@@ -6,7 +6,18 @@
   </head>
   <body>
     <div class="container">
-    	<%=html %>
     </div>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript">
+    	$.ajax({
+    		url:"/steam/getSteam",
+    		type:"get",
+    		dataType: "json",
+    		async:true,
+    		success: function(data){
+    			console.log(data);
+    		}
+    	});
+    </script>
   </body>
 </html>
