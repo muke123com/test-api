@@ -3,7 +3,7 @@ var router = express.Router();
 const session = require('express-session');
 const crypto = require('crypto');
 
-var key="asdhjwheru*asd123-123";//加密的秘钥
+var key="cccc";//加密的秘钥
 
 const account = {
 	cipher: function(password, key){

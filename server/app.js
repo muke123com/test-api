@@ -11,7 +11,7 @@ var account = require('./routes/account');
 var fileManage = require('./routes/fileManage');
 var douban = require('./routes/douban');
 var blibli = require('./routes/blibli');
-var chat = require('./routes/chat');
+var steam = require('./routes/steam');
 
 var app = express();
 
@@ -33,7 +33,7 @@ app.use('/account', account);
 app.use('/file', fileManage);
 app.use('/douban', douban);
 app.use('/blibli', blibli);
-app.use('/chat', chat);
+app.use('/steam', steam);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
