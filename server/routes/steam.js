@@ -4,9 +4,7 @@ var Crawler = require('crawler');
 const connection = require('./../c.js');
 
 var router = express.Router();
-for(var i=0;i<5;i++){
-	steamTop(i);
-}
+
 /* GET home page. */
 var user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36';
 router.get('/index', function(req, res, next) {
@@ -29,6 +27,19 @@ router.get('/getSteam', function(req, res, next) {
 			data: data
 		})
 	})
+});
+router.get('/updateSteamData', function(req, res, next) {
+	connection.query("truncate table m_steam", function (error, results, fields) {
+    	if (error) throw error;
+		for(var i=0;i<5;i++){
+			steamTop(i);
+		}
+		let data = {
+			state: 1,
+			msg: "success"
+		}
+		res.send(data);
+	});
 });
 
 module.exports = router;
@@ -102,24 +113,26 @@ function steamTop(p){
 	            
 	            let names = $("#search_result_container .search_result_row");
 	            for (var i=0;i<names.length;i++) {
+	            	let allPrice = names.eq(i).find(".search_price").text().trim();
 	            	let item = {
 	            		game_id: names.eq(i).attr("data-ds-appid"),
 	            		name: names.eq(i).find(".title").text(),
 	            		discount: names.eq(i).find(".search_discount span").text() || 0,
 	            		image: names.eq(i).find(".search_capsule img").attr("src"),
 	            		href: names.eq(i).attr("href"),
-	            		price: names.eq(i).find(".search_price").text().trim()
+	            		price: Number(allPrice.split("¥")[1].split(",").join("")),
+	            		newPrice: Number(allPrice.split("¥")[2] == null?"":allPrice.split("¥")[2].split(",").join(""))
 	            	}
 	            	var sql_select = 'SELECT * FROM m_steam WHERE game_id="'+item.game_id+'"';
 	            	connection.query(sql_select, function (error, results, fields) {
 				    	if (error) throw error;
 				    	if(results.length == 0) {
-				    		var sql_insert = 'INSERT INTO m_steam (game_id, name, discount, image, href, price) VALUES ("'+item.game_id+'", "'+item.name+'", "'+item.discount+'", "'+item.image+'", "'+item.href+'", "'+item.price+'")';
+				    		var sql_insert = 'INSERT INTO m_steam (game_id, name, discount, image, href, price, newPrice) VALUES ("'+item.game_id+'", "'+item.name+'", "'+item.discount+'", "'+item.image+'", "'+item.href+'", "'+item.price+'", "'+item.newPrice+'")';
 				            connection.query(sql_insert, function (error, results, fields) {
 						    	if (error) throw error;
 							});
 				    	}else{
-				    		var sql_update = 'UPDATE m_steam SET name="'+item.name+'", discount="'+item.discount+'", image="'+item.image+'", href="'+item.href+'", price="'+item.price+'" WHERE game_id="'+item.game_id+'"';
+				    		var sql_update = 'UPDATE m_steam SET name="'+item.name+'", discount="'+item.discount+'", image="'+item.image+'", href="'+item.href+'", price="'+item.price+'", newPrice="'+item.newPrice+'" WHERE game_id="'+item.game_id+'"';
 				            connection.query(sql_update, function (error, results, fields) {
 						    	if (error) throw error;
 							});

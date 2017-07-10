@@ -1,23 +1,67 @@
 <!DOCTYPE html>
 <html>
   <head>
+  	<meta charset="utf-8"/>
+  	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" type="text/css" href="/css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/steam.css"/>
+    <style type="text/css">
+    </style>
   </head>
   <body>
     <div class="container">
+    	<div class="" ng-app="steam_app" ng-controller="steam_controller">
+    		<div class="container-button">
+    			<input type="button" id="updateData" class="update-btn" ng-click="updateData()" value="更新数据" />
+    		</div>
+    		<div class="container-list">
+    			<ul>
+    				<li ng-repeat="game in games">
+    					<div class="gamelist-left">
+    						<img src="{{game.image}}" style="opacity: 0.1;"/>
+    						<span class="discount" ng-if="game.discount != 0">{{game.discount}}</span>
+    					</div>
+    					<div class="gamelist-right">
+    						<h5>
+    							<a href="{{game.href}}">
+    								{{game.name}}
+    							</a>
+    						</h5>
+    						<div class="game-price">
+										<span ng-class="{true: 'del-price'}[game.newPrice != 0]">￥{{game.price}}</span>
+			    					<span ng-if="game.newPrice != 0">
+			    						￥{{game.newPrice}}
+			    					</span>
+    						</div>
+    					</div>
+    				</li>
+    			</ul>
+    		</div>
+    	</div>
     </div>
-    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="/js/angular.min.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
-    	$.ajax({
-    		url:"/steam/getSteam",
-    		type:"get",
-    		dataType: "json",
-    		async:true,
-    		success: function(data){
-    			console.log(data);
-    		}
-    	});
+    	var app = angular.module('steam_app', []);
+			app.controller('steam_controller', function($scope, $http) {
+					$scope.updateData = function(){
+						$http.get("/steam/updateSteamData")
+				    .then(function (result) {
+				        console.log(result);
+				    });
+					}
+			    $http.get("/steam/getSteam")
+			    .then(function (result) {
+			        $scope.games = result.data.data;
+			    });
+			});
+			document.body.onscroll = function(){
+				var scrollTop = document.body.scrollTop;
+				var gameList = document.querySelectorAll(".container-list li");
+				gameList.forEach(function(game){
+					console.log(game.clientTop);
+				})
+			}
     </script>
   </body>
 </html>

@@ -1,0 +1,49 @@
+body{
+	
+}
+.container-list{
+	margin-top: 40px;	
+}
+.container-list li{
+	padding: 5px;
+	overflow: hidden;
+	border-bottom: 1px solid #E2E2E2;
+}
+.gamelist-left{
+	float: left;
+	position: relative;
+	width: 120px;
+}
+.gamelist-right{
+	float: left;
+	margin-left: 10px;
+	width: calc(100% - 130px);
+}
+.discount{
+	display: block;
+	position: absolute;
+	padding: 5px;
+	top: 0;
+	right: 0;
+	color: #8bc53f;
+	font-size: 12px;
+	background-color: #4c6b22;
+	text-align: center;
+}
+.game-price span{
+	font-size: 12px;
+}
+.del-price{
+	margin-right: 20px;
+	color: #AAAAAA;
+	text-decoration: line-through;
+}
+.update-btn{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 40px;
+	background-color: rgba(255,255,255,0.6);
+	border: none;
+}
