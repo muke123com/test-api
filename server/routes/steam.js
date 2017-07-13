@@ -1,12 +1,19 @@
 var express = require('express');
 var request = require('request');
+const EventEmitter = require('events');
+
 var Crawler = require('crawler');
 const connection = require('./../c.js');
 
 var router = express.Router();
 
+class MyEmitter extends EventEmitter {}
+//监听器实例
+const myEmitter = new MyEmitter();
+
 /* GET home page. */
 var user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36';
+let getDataTimes = 5;
 router.get('/index', function(req, res, next) {
 	res.send({msg: 'iii'})
 });
@@ -28,17 +35,21 @@ router.get('/getSteam', function(req, res, next) {
 		})
 	})
 });
+
 router.get('/updateSteamData', function(req, res, next) {
 	connection.query("truncate table m_steam", function (error, results, fields) {
     	if (error) throw error;
-		for(var i=0;i<5;i++){
+		for(var i=0;i<getDataTimes;i++){
 			steamTop(i);
 		}
-		let data = {
-			state: 1,
-			msg: "success"
-		}
-		res.send(data);
+		myEmitter.on('event', () => {
+		    console.log('触发了一个事件！');
+			let data = {
+				state: 1,
+				msg: "success"
+			}
+			res.send(data);
+		});
 	});
 });
 
@@ -97,6 +108,9 @@ function gitSearch(q, p, res){
 	c.queue(url);
 	return data;
 }
+/**
+ * @param {Object} p
+ */
 function steamTop(p){
 	const url = 'http://store.steampowered.com/search/?filter=topsellers&os=win&page='+p;
 	let data = [];
@@ -130,11 +144,19 @@ function steamTop(p){
 				    		var sql_insert = 'INSERT INTO m_steam (game_id, name, discount, image, href, price, newPrice) VALUES ("'+item.game_id+'", "'+item.name+'", "'+item.discount+'", "'+item.image+'", "'+item.href+'", "'+item.price+'", "'+item.newPrice+'")';
 				            connection.query(sql_insert, function (error, results, fields) {
 						    	if (error) throw error;
+						    	getDataTimes--;
+						    	if(getDataTimes == 0){
+						    		myEmitter.emit('event');
+						    	}
 							});
 				    	}else{
 				    		var sql_update = 'UPDATE m_steam SET name="'+item.name+'", discount="'+item.discount+'", image="'+item.image+'", href="'+item.href+'", price="'+item.price+'", newPrice="'+item.newPrice+'" WHERE game_id="'+item.game_id+'"';
 				            connection.query(sql_update, function (error, results, fields) {
 						    	if (error) throw error;
+						    	getDataTimes--;
+						    	if(getDataTimes == 0){
+						    		myEmitter.emit('event');
+						    	}
 							});
 				    	}
 					});

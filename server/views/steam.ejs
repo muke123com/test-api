@@ -11,7 +11,7 @@
   </head>
   <body>
     <div class="container">
-    	<div class="" ng-app="steam_app" ng-controller="steam_controller">
+    	<div class="" ng-app="steam_app" ng-controller="steam_controller" ng-cloak="">
     		<div class="container-button">
     			<input type="button" id="updateData" class="update-btn" ng-click="updateData()" value="更新数据" />
     		</div>
@@ -48,6 +48,7 @@
 						$http.get("/steam/updateSteamData")
 				    .then(function (result) {
 				        console.log(result);
+				        location.reload();
 				    });
 					}
 			    $http.get("/steam/getSteam")
@@ -55,13 +56,7 @@
 			        $scope.games = result.data.data;
 			    });
 			});
-			document.body.onscroll = function(){
-				var scrollTop = document.body.scrollTop;
-				var gameList = document.querySelectorAll(".container-list li");
-				gameList.forEach(function(game){
-					console.log(game.clientTop);
-				})
-			}
+			
     </script>
   </body>
 </html>
