@@ -6,31 +6,32 @@
     <title><%= title %></title>
     <link rel="stylesheet" type="text/css" href="/css/common.css"/>
     <link rel="stylesheet" type="text/css" href="/css/steam.css"/>
+    <script src="/js/vue.js" type="text/javascript" charset="utf-8"></script>
     <style type="text/css">
     </style>
   </head>
   <body>
-    <div class="container">
-    	<div class="" ng-app="steam_app" ng-controller="steam_controller" ng-cloak="">
+    <div class="container" id="scroll-container">
+    	<div class="" id="steam_app" v-cloak="">
     		<div class="container-button">
-    			<input type="button" id="updateData" class="update-btn" ng-click="updateData()" value="更新数据" />
+    			<input type="button" id="updateData" class="update-btn" ng-click="updateData()" value="U" />
     		</div>
     		<div class="container-list">
     			<ul>
-    				<li ng-repeat="game in games">
+    				<li v-for="game of games" >
     					<div class="gamelist-left">
-    						<img src="{{game.image}}" style="opacity: 0.1;"/>
-    						<span class="discount" ng-if="game.discount != 0">{{game.discount}}</span>
+    						<img :src="game.image" style="opacity: 0.1;"/>
+    						<span class="discount" v-if="game.discount != 0">{{game.discount}}</span>
     					</div>
     					<div class="gamelist-right">
     						<h5>
-    							<a href="{{game.href}}">
+    							<a :href="game.href">
     								{{game.name}}
     							</a>
     						</h5>
     						<div class="game-price">
-										<span ng-class="{true: 'del-price'}[game.newPrice != 0]">￥{{game.price}}</span>
-			    					<span ng-if="game.newPrice != 0">
+										<span v-bind:class="{true: 'del-price'}[game.newPrice != 0]">￥{{game.price}}</span>
+			    					<span v-if="game.newPrice != 0">
 			    						￥{{game.newPrice}}
 			    					</span>
     						</div>
@@ -38,25 +39,52 @@
     				</li>
     			</ul>
     		</div>
+    		<div class="loading-container" id="loading-container">
+					<i class="icon icon-loading"></i>
+				</div>
     	</div>
     </div>
-    <script src="/js/angular.min.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
-    	var app = angular.module('steam_app', []);
-			app.controller('steam_controller', function($scope, $http) {
-					$scope.updateData = function(){
-						$http.get("/steam/updateSteamData")
-				    .then(function (result) {
-				        console.log(result);
-				        location.reload();
-				    });
+    	var loading = document.getElementById("loading-container");
+    	console.log(loading);
+    	var app = new Vue({
+    		el: "#steam_app",
+    		data: {
+    			games: []
+    		}
+    	})
+    	
+    	var totalPage = <%=totalPage %>;
+//  	上拉加载
+			document.body.onscroll = function(){
+				var scrollTop = document.body.scrollTop;
+				var winH = document.documentElement.clientHeight;
+				var scrollHeight = document.documentElement.scrollHeight;
+				if(scrollHeight == winH + scrollTop){
+					if(pageNum < totalPage){
+						pageNum++;
+						loading.style.display = "block";
+						setTimeout(function(){
+							getSteam(pageNum);
+							loading.style.display = "none";							
+						}, 1000);
 					}
-			    $http.get("/steam/getSteam")
-			    .then(function (result) {
-			        $scope.games = result.data.data;
-			    });
-			});
-			
+				}
+			}
+    	
+    	var pageNum = 1;
+    	
+    	function getSteam(pageNum){
+	    	fetch('/steam/getSteam?pageNum='+pageNum, {
+	    		method: "get",
+	    	})
+	    		.then(res => res.json())
+	    		.then(data => {
+	    			console.log(data);
+	    			app.games = app.games.concat(data.data);
+	    		});
+    	}
+    	getSteam(pageNum);
     </script>
   </body>
 </html>

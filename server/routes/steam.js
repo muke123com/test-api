@@ -21,14 +21,22 @@ router.get('/git', function(req, res, next) {
 	let q = req.query;
 	let data = gitSearch(q, 1, res);
 });
+//每页显示数量
+let pageSize = 10;
 router.get('/steam', function(req, res, next) {
-	res.render('steam', {
-		title: 'steam'
+	var totalPage;
+	connection.query('SELECT id FROM m_steam', function(error, results, fields){
+		totalPage = Math.ceil(results.length/pageSize);		
+		res.render('steam', {
+			title: 'steam',
+			totalPage: totalPage
+		})
 	})
 });
 router.get('/getSteam', function(req, res, next) {
+	let pageNum = req.query.pageNum || 1;
 	let data = [];
-	connection.query('SELECT * FROM m_steam', function(error, results, fields){
+	connection.query('SELECT * FROM m_steam WHERE id > ('+(pageNum-1)*pageSize+') LIMIT '+pageSize, function(error, results, fields){
 		data = results;		
 		res.send({
 			data: data
@@ -109,6 +117,7 @@ function gitSearch(q, p, res){
 	return data;
 }
 /**
+ * 爬取数据
  * @param {Object} p
  */
 function steamTop(p){
