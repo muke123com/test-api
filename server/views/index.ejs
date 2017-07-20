@@ -2,10 +2,23 @@
 <html>
   <head>
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="/js/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
   </head>
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+    <script type="text/javascript">
+    	function get_test(msg){
+    		setTimeout(function(){
+    			alert(msg);
+    		}, 0)
+    	}
+    	getTest(123);
+    	function get_test_promise(msg){
+    		var promise = new Promise(function(resolve, reject){
+    			get_test()
+    		})
+    	}
+    </script>
   </body>
 </html>

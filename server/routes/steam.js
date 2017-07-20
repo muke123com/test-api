@@ -15,11 +15,10 @@ const myEmitter = new MyEmitter();
 var user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36';
 let getDataTimes = 5;
 router.get('/index', function(req, res, next) {
-	res.send({msg: 'iii'})
-});
-router.get('/git', function(req, res, next) {
-	let q = req.query;
-	let data = gitSearch(q, 1, res);
+	res.send({
+		status: true,
+		msg: 'iii'
+	})
 });
 //每页显示数量
 let pageSize = 10;
@@ -64,58 +63,6 @@ router.get('/updateSteamData', function(req, res, next) {
 module.exports = router;
 
 
-function searchPage(options, callback){
-	request(options, function (error, response, body) {
-	  console.log('error:', error); // Print the error if one occurred
-	  if(error) throw error;
-	  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-	  if(response.statusCode == 200){
-	  	body = body.replace(/<[^<]*>/g, "");
-	  	connection.query('INSERT INTO m_result (content) VALUES ("'+body+'")', function (error, results, fields) {
-		  if (error) throw error;
-		  
-		});
-	  }
-	});
-}
-//https://github.com/search?o=desc&q=javascript&s=stars&type=Repositories&utf8=%E2%9C%93
-function gitSearch(q, p, res){
-	const url = 'https://github.com/search?o=desc&p='+p+'&q='+q+'&s=stars&type=Repositories&utf8=%E2%9C%93'
-	let data = [];
-	var c = new Crawler({
-	    maxConnections : 10,
-	    // This will be called for each crawled page
-	    callback : function (error, response, done) {
-	        if(error){
-	            console.log(error);
-	        }else{
-	            var $ = response.$;
-	            // $ is Cheerio by default
-	            //a lean implementation of core jQuery designed specifically for the server
-	            
-	            let names = $(".v-align-middle");
-	            for (var i=0;i<names.length;i++) {
-	            	let item = {
-	            		id: (p-1)*10+(i+1),
-	            		name: names.eq(i).html(),
-	            		page: p,
-	            		href: names.eq(i).attr("href")
-	            	}
-	            	data.push(item);
-	            }
-            	res.send({
-					data: data
-				})
-
-	        }
-	        done();
-	    }
-	});
-	
-	// Queue just one URL, with default callback
-	c.queue(url);
-	return data;
-}
 /**
  * 爬取数据
  * @param {Object} p
