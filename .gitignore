@@ -1,6 +1,6 @@
-/server/node_modules/*
-/server/uploads/*
-/server/bin/*
+/*/node_modules/*
+/*/uploads/*
+/*/bin/*
 /.settings/*
 /.project
 /.buildpath
