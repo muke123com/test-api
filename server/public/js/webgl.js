@@ -28,7 +28,7 @@ function baseThree(){
 	var texture = THREE.ImageUtils.loadTexture('/images/crate.gif');  //载入贴图
 	var geometry = new THREE.BoxGeometry(10,10,10);
 	var cube_material = new THREE.MeshLambertMaterial( { color: 0xf08b2f } ); 
-	cube_material.map = texture;
+	cube_material.map = texture;  //材质添加贴图
 	var cube = new THREE.Mesh( geometry, cube_material );
 	cube.castShadow = true;  
 	scene.add( cube );
