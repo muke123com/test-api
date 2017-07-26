@@ -18,19 +18,27 @@
 				font-size: 12px;
 				color: #333333;
 			}
+			.webgl-content{
+				display: none;
+			}
 		</style>
 	</head>
 	<body>
 		<div class="webgl-conatiner">
 			<div class="webgl-tab">
-				<a href="#" onclick="baseThree()">three.js基础</a>
+				<a href="#" onclick="baseThree()">基础</a>
+				<a href="#" onclick="loadObj()">模型</a>
 			</div>
-			<div class="webgl-content">
+			<div class="webgl-content webgl-base">
+				
+			</div>
+			<div class="webgl-content webgl-obj">
 				
 			</div>
 		</div>
 		<script src="/js/three.js" type="text/javascript" charset="utf-8"></script>
 		<script src="/js/OrbitControls.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/js/OBJLoader.js" type="text/javascript" charset="utf-8"></script>
 		<script src="/js/webgl.js" type="text/javascript" charset="utf-8"></script>
 		<script type="text/javascript">
 			
