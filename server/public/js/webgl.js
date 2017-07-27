@@ -24,14 +24,14 @@ function baseThree(){
 	//载入背景贴图	
 	//http://www.humus.name/index.php?page=Textures 图片下载地址
 	var cube_loader = new THREE.CubeTextureLoader();
-	cube_loader.setPath('/images/bg/');
+	cube_loader.setPath('/images/skybox/');
 	var textureCube = cube_loader.load( [
-		'posx.jpg', 
-		'negx.jpg', 
-		'posy.jpg', 
-		'negy.jpg', 
-		'posz.jpg', 
-		'negz.jpg', 
+		'px.jpg', 
+		'nx.jpg', 
+		'py.jpg', 
+		'ny.jpg', 
+		'pz.jpg', 
+		'nz.jpg', 
 	] )
 	scene.background = textureCube;
 	//控制
@@ -109,7 +109,8 @@ function baseThree(){
 /**
  * 载入obj模型
  */
-function loadObj(){
+function loadModel(){
+	var modelType = prompt("请填写模型文件类型");
 	$(".webgl-content").style.display = "none";
 	$(".webgl-obj").style.display = "block";
 	if(objLoaded == 1){
@@ -122,6 +123,19 @@ function loadObj(){
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	renderer.shadowMap.enabled = true;  
 	$(".webgl-obj").appendChild(renderer.domElement);
+	//载入背景贴图	
+	//http://www.humus.name/index.php?page=Textures 图片下载地址
+	var cube_loader = new THREE.CubeTextureLoader();
+	cube_loader.setPath('/images/skybox/');
+	var textureCube = cube_loader.load( [
+		'px.jpg', 
+		'nx.jpg', 
+		'py.jpg', 
+		'ny.jpg', 
+		'pz.jpg', 
+		'nz.jpg', 
+	] )
+	scene.background = textureCube;
 	//控制
 	var controls = new THREE.OrbitControls( camera, renderer.domElement );
 	controls.addEventListener('change', function() {
@@ -130,32 +144,92 @@ function loadObj(){
 	//光源
 	var light = new THREE.AmbientLight(0xcccccc);  
 	scene.add(light);  
-	//贴图载入
-	var texture = new THREE.Texture();
-	var t_loader = new THREE.ImageLoader();
-	t_loader.load('/obj/cerberus/Cerberus_A.jpg', function(image){
-		texture.image = image;
-		texture.needsUpdate = true;
-	})
-	//模型载入
-	var obj_loader = new THREE.OBJLoader();
-	obj_loader.load(
-		'/obj/cerberus/Cerberus.obj',
-		function (obj) {
-			obj.traverse(function(child){
-				if ( child instanceof THREE.Mesh ) {	
-					child.material.map = texture;
+	//obj
+	if(modelType == 'obj'){
+		//贴图载入
+		var texture = new THREE.Texture();
+		var t_loader = new THREE.ImageLoader();
+		t_loader.load('/model/obj/ninja/displacement.jpg', function(image){
+			texture.image = image;
+			texture.needsUpdate = true;
+		})
+		//obj模型载入
+		var obj_loader = new THREE.OBJLoader();
+		obj_loader.load(
+			'/model/obj/tree.obj',
+			function (obj) {
+				obj.traverse(function(child){
+					if ( child instanceof THREE.Mesh ) {	
+						child.material.map = texture;
+					}
+				})
+				var s = 1;
+				obj.scale.set(s,s,s);
+				scene.add( obj );
+				function animate() {
+					requestAnimationFrame( animate );
+					obj.rotation.y += 0.01;
+					renderer.render( scene, camera );
 				}
-			})
-			scene.add( obj );
+				animate();
+			}
+		)
+	}else if(modelType == 'js'){
+		var mixer = new THREE.AnimationMixer( scene );
+		var clock = new THREE.Clock();
+		//json模型
+		var json_loader = new THREE.JSONLoader();
+		json_loader.load(
+			'/model/json/flamingo.js',
+			function( geometry, materials ){
+				var material = materials[0];
+				material.morphTargets = true;
+				var mesh = new THREE.Mesh( geometry, material );
+				var s = 0.01;
+				mesh.scale.set(s,s,s);
+				scene.add( mesh );
+				mixer.clipAction( geometry.animations[0], mesh )
+					.setDuration(1)
+					.startAt(-Math.random())
+					.play();
+				function animate() {
+					requestAnimationFrame( animate );
+					mixer.update( clock.getDelta() );
+					renderer.render( scene, camera );
+				}
+				animate();
+			}
+		)
+	}else if(modelType == 'json'){
+		function makePlatform( jsonUrl, textureUrl, textureQuality ) {
+			var placeholder = new THREE.Object3D();
+
+			var texture = new THREE.TextureLoader().load( textureUrl );
+			texture.minFilter = THREE.LinearFilter;
+			texture.anisotropy = textureQuality;
+
+			var loader = new THREE.JSONLoader();
+			loader.load( jsonUrl, function( geometry ) {
+
+				geometry.computeFaceNormals();
+
+				var platform = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial({ map : texture }) );
+
+				platform.name = "platform";
+
+				placeholder.add( platform );
+			});
+
+			return placeholder;
 		}
-	)
-	camera.position.set(0, 10, 20);
-	function animate() {
-		requestAnimationFrame( animate );
-		renderer.render( scene, camera );
+		scene.add( makePlatform(
+			'/model/json/platform.json',
+			'/model/json/platform.jpg',
+			renderer.capabilities.getMaxAnisotropy()
+		));
 	}
-	animate();
+	camera.position.set(0, 10, 20);
+	
 	
 	objLoaded = 1;
 }
