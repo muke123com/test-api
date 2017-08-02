@@ -1,7 +1,8 @@
 var express = require('express');
 var request = require('request');
 const EventEmitter = require('events');
-
+const redis = require('redis');
+const client = require('./../redis_c.js');
 var Crawler = require('crawler');
 const connection = require('./../c.js');
 
@@ -15,10 +16,16 @@ const myEmitter = new MyEmitter();
 var user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36';
 let getDataTimes = 5;
 router.get('/index', function(req, res, next) {
-	res.send({
-		status: true,
-		msg: 'iii'
-	})
+	client.get('steamData', function(err, data){
+		if(err){
+			console.error(err)
+		}
+		res.send({
+			status: true,
+			msg: 'iii',
+			data: data
+		})
+	});
 });
 //每页显示数量
 let pageSize = 10;
@@ -32,6 +39,25 @@ router.get('/steam', function(req, res, next) {
 		})
 	})
 });
+
+/**
+ * 获取数据库数据存入redis 
+ */
+function insertRedis(){
+	let data = "";
+	connection.query('SELECT * FROM m_steam', function(error, results, fields){
+		data = JSON.stringify(results);		
+		client.set('steamData', data, redis.print);
+	})
+}
+insertRedis();
+
+//从redis中取数据
+router.get('/getRedisSteam', function(req, res, next) {
+	
+});
+
+//从数据库中获取数据
 router.get('/getSteam', function(req, res, next) {
 	let pageNum = req.query.pageNum || 1;
 	let data = [];
@@ -42,7 +68,7 @@ router.get('/getSteam', function(req, res, next) {
 		})
 	})
 });
-
+//更新数据库数据
 router.get('/updateSteamData', function(req, res, next) {
 	connection.query("truncate table m_steam", function (error, results, fields) {
     	if (error) throw error;
