@@ -5,12 +5,15 @@
     <script src="/js/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
   </head>
   <body>
-    <h1><%= title %></h1>
+    <h1 onclick="inputFocus()"><%= title %></h1>
     <p>Welcome to <%= title %></p>
     <input type="text" id="text" />
     <script type="text/javascript">
     	$("#text").focus();
     	$(".search-blur").trigger("click");
+    	function inputFocus(){
+    		$(".search-blur").trigger("click");
+    	}
     </script>
   </body>
 </html>
