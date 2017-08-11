@@ -6,6 +6,19 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link rel="stylesheet" type="text/css" href="/css/common.css" />
 		<title></title>
+		<style type="text/css">
+			.square{
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				margin-left: -75px;
+				margin-top: -75px;
+				width: 150px;
+				height: 150px;
+				background-color: #F08B2F;
+				transition: 0.3s;
+			}
+		</style>
 	</head>
 
 	<body>
@@ -14,15 +27,20 @@
 			<p id="beta"></p>
 			<p id="gamma"></p>
 		</div>
+		<div class="square" id="square">
+			
+		</div>
 		<script type="text/javascript">
 			var alpha = document.getElementById("alpha");
 			var beta = document.getElementById("beta");
 			var gamma = document.getElementById("gamma");
+			var square = document.getElementById("square");
 			window.addEventListener("deviceorientation", function(event) {
 				// 处理event.alpha、event.beta及event.gamma
 				alpha.innerText = event.alpha;
 				beta.innerText = event.beta;
 				gamma.innerText = event.gamma;
+				square.style.transform = "rotate("+alpha+"deg)";
 			}, true);
 		</script>
 	</body>
