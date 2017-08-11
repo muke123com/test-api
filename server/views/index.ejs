@@ -7,18 +7,9 @@
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+    <input type="text" id="text" />
     <script type="text/javascript">
-    	function get_test(msg){
-    		setTimeout(function(){
-    			alert(msg);
-    		}, 0)
-    	}
-    	getTest(123);
-    	function get_test_promise(msg){
-    		var promise = new Promise(function(resolve, reject){
-    			get_test()
-    		})
-    	}
+    	$("#text").focus();
     </script>
   </body>
 </html>
