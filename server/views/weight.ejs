@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="/css/common.css" />
+		<title></title>
+	</head>
+
+	<body>
+		<div class="container">
+			<p id="alpha"></p>
+			<p id="beta"></p>
+			<p id="gamma"></p>
+		</div>
+		<script type="text/javascript">
+			var alpha = document.getElementById("alpha");
+			var beta = document.getElementById("beta");
+			var gamma = document.getElementById("gamma");
+			window.addEventListener("deviceorientation", function(event) {
+				// 处理event.alpha、event.beta及event.gamma
+				alpha.innerText = event.alpha;
+				beta.innerText = event.beta;
+				gamma.innerText = event.gamma;
+			}, true);
+		</script>
+	</body>
+
+</html>
