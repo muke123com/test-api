@@ -1,19 +1,21 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const session = require('express-session');
 
-var index = require('./routes/index');
-var account = require('./routes/account');
-var fileManage = require('./routes/fileManage');
-var douban = require('./routes/douban');
-var blibli = require('./routes/blibli');
-var steam = require('./routes/steam');
+const index = require('./routes/index');
+const account = require('./routes/account');
+const fileManage = require('./routes/fileManage');
+const douban = require('./routes/douban');
+const blibli = require('./routes/blibli');
+const steam = require('./routes/steam');
+const mp3 = require('./routes/mp3');
+const article = require('./routes/api/article');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,6 +36,8 @@ app.use('/file', fileManage);
 app.use('/douban', douban);
 app.use('/blibli', blibli);
 app.use('/steam', steam);
+app.use('/mp3', mp3);
+app.use('/api/article', article);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

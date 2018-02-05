@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="/js/jquery-2.1.0.js" charset="utf-8"></script>
+    <style>
+        ul,li{
+            list-style: none;
+        }
+        .content img{
+            width: 200px;
+        }
+        .content a{
+            text-decoration: none;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <input type="text" class="cur_page" value="1">
+        <a href="javascript:void(0)" class="get_article">点击</a>
+    </div>
+    <div class="content"><ul></ul></div>
+    <script>
+        var cur_page = 1;
+        $(".get_article").click(function () {
+            cur_page = $(".cur_page").val();
+            $.ajax({
+                url: "https://www.kuaizhan.com/post/ajax-postlist",
+                data: {
+                    site_id:"9941853715",
+                    param:"a891b9bfac46d41ebace9eccf88f5bbb",
+                    cur_page:cur_page,
+                    jsonpcallback:"jsonp1"
+                },
+                type: "get",
+                dataType: "jsonp",
+                jsonp:'jsonp1',
+                success: function (res) {
+                    console.log(res);
+                }
+            })
+        });
+        $(".cur_page").keyup(function (e) {
+            if(e.keyCode == 13){
+                $(".get_article").click()
+            }
+        });
+        function jsonp1(data) {
+            var html = $(data.data);
+            var htmls = "";
+            var lis = html.find("li");
+            var img_html = "";
+            var saveData = [];
+
+            lis.each(function (i) {
+                var title = lis.eq(i).find("h3").text();
+                var href = lis.eq(i).find("a").attr("href");
+                var p = lis.eq(i).find("p").text();
+                console.log(lis.eq(i));
+                if(p.indexOf(".jpeg") !== -1){
+                    var img = p.split(".jpeg")[0] + ".jpeg";
+                }else if(p.indexOf(".gif") !== -1){
+                    var img = p.split(".gif")[0] + ".gif";
+                }else{
+                    var img = "";
+                }
+                if(img != ""){
+                    img_html = `<img src="${img}" />`;
+                }
+                var obj = {};
+                obj['title'] = title;
+                obj['href'] = href;
+                obj['img'] = img;
+                saveData[i] = obj;
+                htmls += `<li><a href="https://649399.kuaizhan.com${href}" target="_blank">
+                    ${img_html}
+                    <h5>${title}</h5>
+                </a></li>`;
+                $(".content ul").html(htmls);
+            });
+            saveData = JSON.stringify(saveData);
+            $.ajax({
+                url: '/api/article/saveArticleList',
+                data: {
+                    cur_page: cur_page,
+                    saveData: saveData
+                },
+                type: "post",
+                dataType: "json",
+                success: function (res) {
+                    console.log(res);
+                }
+            })
+        }
+    </script>
+</body>
+</html>

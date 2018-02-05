@@ -34,15 +34,15 @@ router.get('/fileList', function(req, res, next) {
 router.post('/fileUpload', upload.single('files'), function(req, res, next) {
 	var data = {
 		msg: "上传成功"
-	}
+	};
   res.send(data);
-})
+});
 
 //下载
 router.get('/fileDownload/:fileName', function(req, res, next) {
 	let fileName = req.params.fileName;
 	let path = "./uploads/"+ fileName;
 	res.download(path);
-})
+});
 
 module.exports = router;

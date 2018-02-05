@@ -1,0 +1,70 @@
+<%var title = "抓取" %>
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>
+			<%= title %>
+		</title>
+		<link rel="stylesheet" type="text/css" href="/css/common.css"/>
+		<script src="/js/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/js/common.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<input type="button" value="下载" id="download_img">
+		<input type="button" value="查看" id="view_img">
+		<div class="">
+			<input type="text" name="img_num"  />
+			<input type="button" value="下载图片" id="d_num_img" />
+		</div>
+		<script>
+			$("#view_img").click(function () {
+				$.ajax({
+					url: "/blibli/viewAllImages",
+					data: {},
+					type: "post",
+					dataType: "json",
+					success: function (res) {
+					    var imageNums = res;
+					    var lackImages = [];
+					    for(var i=0;i<imageNums.length;i++){
+                            imageNums[i] = parseInt(imageNums[i].split(".jpg")[0]);
+						}
+                        imageNums.sort(function (a,b) {
+							return a-b;
+                        });
+						for (var i=0;i<imageNums.length;i++){
+                            lackImages[imageNums[i]] = imageNums[i];
+						}
+                        for (var i=0;i<lackImages.length;i++){
+                            if(lackImages[i] == null){
+                                console.log(i);
+							}
+                        }
+//						console.log(lackImages);
+                    }
+				})
+            })
+			
+			$("#d_num_img").click(function () {
+			    var num = $(this).siblings("input[type=text]").val();
+			    if(num != ""){
+                    $.ajax({
+                        url: "/blibli/downloadImage",
+                        data: {
+                            num: num
+                        },
+                        type: "post",
+                        dataType: "json",
+                        success: function (res) {
+                            console.log(res);
+                        }
+                    })
+                }
+            })
+		</script>
+	</body>
+
+</html>

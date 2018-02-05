@@ -1,3 +1,4 @@
+<%var title = "首页" %>
 <!DOCTYPE html>
 <html>
 
@@ -6,13 +7,73 @@
 		<title>
 			<%= title %>
 		</title>
+		<link rel="stylesheet" type="text/css" href="/css/common.css"/>
 		<script src="/js/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/js/common.js" type="text/javascript" charset="utf-8"></script>
+		<style>
+			.song-list a{
+				display: block;
+				font-size: 12px;
+				color: #666;
+				text-decoration: none;
+			}
+		</style>
 	</head>
 
 	<body>
-		<h1><%= title %></h1>
-		<input type="file" name="" id="" value="" />
+		<div class="song-list">
+            <%for(var i=0;i<songs.length;i++){%>
+			<a href="javascript:void(0)" onclick="setAudio('/mp3/<%=songs[i]%>')" target="_blank"><%=songs[i]%></a>
+            <%}%>
+		</div>
+		<!--<audio controls="controls" autoplay="autoplay" id="audio"></audio>-->
+		<audio crossOrigin="anonymous" autoplay="autoplay" id="audio"></audio>
+		<canvas id="canvas" width="" height=""></canvas>
 		<script type="text/javascript">
+			function setAudio(path) {
+				$("#audio").attr("src", path);
+            }
+		</script>
+		<script type="text/javascript">
+			
+			var context1 = new (window.AudioContext || window.webkitAudioContext);
+			
+			var analyser = context1.createAnalyser();
+			
+			window.addEventListener("load", function(e){
+				var audio = document.getElementById("audio");
+				var source = context1.createMediaElementSource(audio);
+				source.connect(analyser);
+         		analyser.connect(context1.destination);
+			}, false)
+			
+			var canvas = document.getElementById("canvas");
+			var w = 1366;
+			var h = 768;
+			canvas.width = w;
+			canvas.height = h;
+			var ctx = canvas.getContext("2d");
+			
+			var anima;
+			function draw(){
+			 	var array =  new Uint8Array(128);
+			 	analyser.getByteFrequencyData(array);
+				anima = requestAnimFrame(draw);
+				ctx.clearRect(0,0,w,h);
+				for(var i=0;i<array.length;i++){
+					var colorh = i/128*270;
+					ctx.beginPath();
+					ctx.fillStyle = "hsl(" + colorh + ", 100%, 50%)";
+					ctx.strokeStyle = "hsl(" + colorh + ", 100%, 50%)";
+					ctx.rect(i*5, h - array[i], 4, array[i]);
+//					ctx.moveTo(i*10, h - array[i]);
+//					ctx.lineTo((i+1)*10, h - array[i+1]);
+					ctx.fill();
+					ctx.stroke();
+					ctx.closePath();
+				}
+			}
+			draw();
 			
 		</script>
 	</body>
