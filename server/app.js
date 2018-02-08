@@ -13,7 +13,8 @@ const douban = require('./routes/douban');
 const blibli = require('./routes/blibli');
 const steam = require('./routes/steam');
 const mp3 = require('./routes/mp3');
-const article = require('./routes/api/article');
+const book = require('./routes/api/book');
+const poetries = require('./routes/api/poetries');
 
 const app = express();
 
@@ -37,7 +38,8 @@ app.use('/douban', douban);
 app.use('/blibli', blibli);
 app.use('/steam', steam);
 app.use('/mp3', mp3);
-app.use('/api/article', article);
+app.use('/api/book', book);
+app.use('/api/poetries', poetries);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
