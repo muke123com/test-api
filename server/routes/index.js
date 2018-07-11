@@ -37,6 +37,7 @@ router.get('/weight', function(req, res, next) {
 });
 
 router.post('/testApi', function(req, res, next) {
+	console.log(req.body);
 	let name = req.body.name;
 	let title = req.body.title;
 	var data = {

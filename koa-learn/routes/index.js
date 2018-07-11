@@ -15,5 +15,9 @@ router.get('/json', async (ctx, next) => {
     title: 'koa2 json'
   }
 });
-
+router.post('/api', async (ctx, next) => {
+  ctx.body = {
+    title: 'xx'
+  }
+});
 module.exports = router;
