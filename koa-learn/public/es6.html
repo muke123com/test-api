@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <script>
+        //promise
+        var p = new Promise(function (resolve, reject) {
+            //resolve 成功回调
+            //reject 失败回调
+            setTimeout(() => {
+                var name = 'aaa';
+                resolve(name);
+            }, 1000)
+        })
+
+        p.then((data) => {
+            console.log(data);
+        })
+
+        //async await
+        //定义异步方法
+        async function getData() {
+            return '123456'
+        }
+
+        async function wait() {
+            var d = await getData()
+            console.log(d);
+        }
+
+        wait();
+
+
+    </script>
+</body>
+</html>
