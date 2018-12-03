@@ -2,13 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="js/jquery-2.1.0.js"></script>
     <script src="https://cdn.bootcss.com/socket.io/2.0.4/socket.io.js"></script>
     <title>Title</title>
-    <script>
-        var socket = io();
-    </script>
+
 </head>
 <body>
-
+    <div class="">
+        <div id="count"></div>
+        <form>
+            <input type="text" id="m">
+            <input type="submit" value="提 交">
+        </form>
+        <ul id="messages"></ul>
+    </div>
+    <script>
+        var socket = io();
+        $(function () {
+            var socket = io();
+            $('form').submit(function(){
+                socket.emit('chat message', $('#m').val());
+                $('#m').val('');
+                return false;
+            });
+            socket.emit('login', { username: 'user'+ location.hash});
+            socket.on('users',function(data){
+                $("#count").text("当前在线人数：" + data.length)
+            });
+            socket.on('chat message', function(msg){
+                $('#messages').append($('<li>').text(msg));
+            });
+        });
+    </script>
 </body>
 </html>
